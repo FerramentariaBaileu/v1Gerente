@@ -4,7 +4,7 @@ import AppShell from '../components/AppShell.jsx'
 import { useAuth } from '../contexts/AuthContext.jsx'
 import { atualizarEstoque, cadastrarProduto } from '../services/inventoryService.js'
 
-const emptyProduct = { nome: '', descricao: '', preco: '', categoria: '', estoque_inicial: '0' }
+const emptyProduct = { codigo: '', nome: '', observacoes: '', categoria: '', unidade: 'un' }
 const emptyStock = { produto: '', operacao: 'adicionar', quantidade: '' }
 
 export default function AdminPage() {
@@ -36,17 +36,19 @@ export default function AdminPage() {
     {feedback && <div className={`feedback ${feedback.ok ? 'success' : 'failure'}`}><CheckCircle2 size={19} />{feedback.text}</div>}
     <div className="admin-grid">
       <form className="form-card" onSubmit={create}><div className="form-title"><PackagePlus /><div><h2>Novo produto</h2><p>Cadastro de produto acabado</p></div></div>
+        <label>Código interno<input required value={product.codigo} onChange={(e) => setProduct({ ...product, codigo: e.target.value })} placeholder="Código único do produto" /></label>
         <label>Nome do produto<input required value={product.nome} onChange={(e) => setProduct({ ...product, nome: e.target.value })} /></label>
-        <label>Descrição<textarea required rows="3" value={product.descricao} onChange={(e) => setProduct({ ...product, descricao: e.target.value })} /></label>
-        <div className="form-row"><label>Preço (R$)<input required min="0" step="0.01" type="number" value={product.preco} onChange={(e) => setProduct({ ...product, preco: e.target.value })} /></label><label>Estoque inicial<input required min="0" step="0.001" type="number" value={product.estoque_inicial} onChange={(e) => setProduct({ ...product, estoque_inicial: e.target.value })} /></label></div>
+        <label>Observações<textarea rows="3" value={product.observacoes} onChange={(e) => setProduct({ ...product, observacoes: e.target.value })} /></label>
+        <label>Unidade<input required value={product.unidade} onChange={(e) => setProduct({ ...product, unidade: e.target.value })} placeholder="un, kg, m..." /></label>
+        <p className="muted">Após cadastrar, registre a quantidade inicial no formulário de ajuste de estoque.</p>
         <label>Categoria<input required value={product.categoria} onChange={(e) => setProduct({ ...product, categoria: e.target.value })} /></label>
-        <button className="primary" disabled={busy === 'product'}>{busy === 'product' ? 'Salvando...' : 'Cadastrar produto'}</button>
+        <button className="primary" disabled={Boolean(busy)}>{busy === 'product' ? 'Salvando...' : 'Cadastrar produto'}</button>
       </form>
       <form className="form-card" onSubmit={adjust}><div className="form-title"><Boxes /><div><h2>Ajustar estoque</h2><p>Registra uma movimentação auditável</p></div></div>
         <label>Produto ou código<input required value={stock.produto} onChange={(e) => setStock({ ...stock, produto: e.target.value })} placeholder="Ex.: PA-0001" /></label>
         <label>Operação<select value={stock.operacao} onChange={(e) => setStock({ ...stock, operacao: e.target.value })}><option value="adicionar">Adicionar</option><option value="remover">Remover</option></select></label>
         <label>Quantidade<input required min="0.001" step="0.001" type="number" value={stock.quantidade} onChange={(e) => setStock({ ...stock, quantidade: e.target.value })} /></label>
-        <button className="primary" disabled={busy === 'stock'}>{busy === 'stock' ? 'Salvando...' : 'Registrar ajuste'}</button>
+        <button className="primary" disabled={Boolean(busy)}>{busy === 'stock' ? 'Salvando...' : 'Registrar ajuste'}</button>
       </form>
     </div>
   </section></AppShell>
